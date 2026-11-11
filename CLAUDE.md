@@ -18,7 +18,7 @@ rule names the comment in the code that carries the argument, so the code stays 
   [test-suite](docs/test-suite.md).
 - Agent and policy tracing goes to stdout, so add `--nocapture` when you want it.
 - **The emulator is `gbc`, from crates.io**; its source and its docs live in `axle-h/gbc`. To change
-  both at once, put `[patch.crates-io] gbc = { path = "../gbc" }` in `.cargo/config.toml`, which is
+  both at once, put `[patch.crates-io] gbc = { path = "../gbc/gbc" }` in `.cargo/config.toml`, which is
   gitignored, and release `gbc` before pushing anything here that needs the change.
 - **Run the four pre-push gates after every major work item and before pushing**: `full_playthrough`,
   `grand_tour`, `pokered`'s slow tier and `poke-agent`'s `lockstep::`/`harvest::` tier, commands in
