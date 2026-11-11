@@ -35,7 +35,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: gb
-          image: ghcr.io/axle-h/gb:latest
+          image: ghcr.io/axle-h/poke-agent:latest
           imagePullPolicy: Always
           # The policy is `GB_POLICY` in `configmap.yml`; `--policy` here would override it.
           # This resumes the newest run; `--new-run` here would wipe the run on every restart.

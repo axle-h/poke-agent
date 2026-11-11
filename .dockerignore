@@ -10,8 +10,6 @@ runs/
 docs/
 .github/
 *.md
-# Except the one `gbc` compiles in as its crate docs.
-!gbc/README.md
 Dockerfile
 .dockerignore
 docker-compose.yml

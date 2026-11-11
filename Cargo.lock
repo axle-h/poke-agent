@@ -536,6 +536,8 @@ dependencies = [
 [[package]]
 name = "gbc"
 version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59f6ffd68ec27c70ff30ac41a323d6b120f4223fd95a9f334d354fe55ea78d15"
 dependencies = [
  "bincode",
  "bitflags 2.9.3",
@@ -544,7 +546,6 @@ dependencies = [
  "paste",
  "png 0.18.1",
  "serde",
- "serde_json",
  "strum",
  "strum_macros",
 ]

@@ -7,7 +7,7 @@ project is, the crate map, the policy/agent model, the run directory, the endpoi
 block, the build and the deployment.
 
 What it leaves out — the invariants and the traps, nearly every one learned by breaking something —
-is in nine short documents under `docs/`, one per area. **They are not loaded automatically.** Read
+is in seven short documents under `docs/`, one per area. **They are not loaded automatically.** Read
 the one for the area you are about to touch, before touching it. Each is a list of rules, and each
 rule names the comment in the code that carries the argument, so the code stays the source of truth.
 
@@ -17,6 +17,9 @@ rule names the comment in the code that carries the argument, so the code stays 
   --workspace` is the default tier, about 30 s warm; every other command is in
   [test-suite](docs/test-suite.md).
 - Agent and policy tracing goes to stdout, so add `--nocapture` when you want it.
+- **The emulator is `gbc`, from crates.io**; its source and its docs live in `axle-h/gbc`. To change
+  both at once, put `[patch.crates-io] gbc = { path = "../gbc" }` in `.cargo/config.toml`, which is
+  gitignored, and release `gbc` before pushing anything here that needs the change.
 - **Run the four pre-push gates after every major work item and before pushing**: `full_playthrough`,
   `grand_tour`, `pokered`'s slow tier and `poke-agent`'s `lockstep::`/`harvest::` tier, commands in
   [test-suite](docs/test-suite.md). They gate different things — the scripted route through the whole
@@ -54,8 +57,6 @@ The repository was cleaned up deliberately and it is worth keeping that way. Fiv
 
 | Doc | Read before |
 |---|---|
-| [emulator-core](docs/emulator-core.md) | `gbc/src/{mmu,mbc,ppu,savestate,schedule,cycles,game_boy}.rs`, adding or reordering a serialised field, adding a file to `poke-agent/src/pokemon/data/` |
-| [emulator-performance](docs/emulator-performance.md) | optimising `gbc/src/{ppu,core,opcode,mmu}.rs` or `gbc/src/audio/`, or building a rig to measure them |
 | [pokemon-agent](docs/pokemon-agent.md) | `poke-agent/src/pokemon/{agent,policy,text,tile_map,actions}.rs`, `AgentEvent` or any `Display` it goes through, the SPA's `useEventStream.ts` |
 | [llm-turn-loop](docs/llm-turn-loop.md) | anything under `poke-agent/src/llm/`, `poke-agent/src/pokemon/llm_policy.rs`, any change to what the model is sent |
 | [web-streams](docs/web-streams.md) | `poke-agent-web/src/web/{video,audio}*`, the SPA's `{stream,video,audio}.ts` |

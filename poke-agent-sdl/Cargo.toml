@@ -5,7 +5,7 @@ edition = "2024"
 description = "The desktop window: the cartridge and the recreation side by side, in SDL2."
 
 [dependencies]
-gbc = { path = "../gbc" }
+gbc = "0.1.1"
 poke-agent = { path = "../poke-agent" }
 pokered = { path = "../pokered" }
 fontdue = "0.9.3"

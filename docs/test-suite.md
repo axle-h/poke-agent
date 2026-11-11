@@ -88,7 +88,12 @@ cargo test --release --workspace --features slow-tests -- probe_ --ignored --noc
   reads any state named in `GB_DUMP_STATES` (`:`-separated) instead of the committed chain: map,
   party, bag, dex count and the current box, which is where a re-ordered route's answers are.
 - `every_committed_fixture_decodes` (default tier, in `poke-agent`) loads all of them, so a save-state layout
-  break fails in two seconds rather than an hour into `slow-tests`.
+  break fails in two seconds rather than an hour into `slow-tests`. Every `.bin` in
+  `poke-agent/src/pokemon/data/` must therefore be a save state; other binary fixtures go elsewhere.
+- Every fixture is a DMG capture. On an SGB it reads `wOnSGB` and `wDefaultPaletteCommand` clear, so
+  a lockstep boots to `LoadSGB` first and sets both (`lockstep/mod.rs` `on_sgb`).
+- `emulator_tests::bench_pokemon_red_throughput` is the yardstick for `gbc`'s speed; how to profile
+  it is in `gbc`'s `docs/emulator-performance.md`.
 
 ## Writing a test
 
@@ -106,6 +111,5 @@ cargo test --release --workspace --features slow-tests -- probe_ --ignored --noc
   name filters. The thirteen `completion_phase_*` tests were ignored on the grounds that they are
   slow, and three of them sat red on main for days with every gate green. Gate on the module's
   feature instead, as `completion_run` and `soak` do.
-- `gbc`'s tests run on its own test ROMs, never Pokémon Red; a test of the emulator against the
-  cartridge goes in `poke-agent/src/emulator_tests.rs`. `gbc/src/roms/workload/` is our own
-  cartridge, and a test breaks on its fixed addresses, so rebuild it with its `build.sh`.
+- `gbc`'s tests, in its own repository, run on its own test ROMs, never Pokémon Red; a test of the
+  emulator against the cartridge goes in `poke-agent/src/emulator_tests.rs`.

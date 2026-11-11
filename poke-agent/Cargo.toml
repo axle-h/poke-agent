@@ -9,7 +9,7 @@ description = "Plays Pokémon Red on the gbc emulator, through the game's own me
 slow-tests = []
 
 [dependencies]
-gbc = { path = "../gbc" }
+gbc = "0.1.1"
 poke-core = { path = "../poke-core" }
 pokered = { path = "../pokered" }
 base64 = "0.22"

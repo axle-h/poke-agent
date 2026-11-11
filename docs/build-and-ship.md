@@ -34,8 +34,6 @@ Read when a build fails before it reaches Rust, and before touching the `Dockerf
   and `type=gha` caches layers rather than the cargo cache mounts — a full cold build each time. A
   binary nobody stamped reports `null`.
 - `recreation.yml` builds `pokered-sdl` and tests `pokered` with no rgbds: the proof neither needs the cartridge.
-- `publish-gbc.yml` publishes `gbc` on a `gbc-v<version>` tag through crates.io Trusted Publishing, which
-  trusts that file name alone; the tag must match `gbc/Cargo.toml`'s version.
 - CI builds the image, smoke-tests the running container, then pushes. The push steps are main-only:
   a fork PR's token is read-only whatever `permissions:` asks for.
 - `k8s/` is one replica, `strategy: Recreate`, a PVC, a 30 s grace period and no CPU limit, all for

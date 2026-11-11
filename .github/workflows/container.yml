@@ -19,9 +19,9 @@ permissions:
   # one-off in its settings (see `k8s/README.md`).
   packages: write
 
-# The image `k8s/gb/deployment.yml` pulls. Named, not taken from the repository, which is `gbc`.
+# The image `k8s/gb/deployment.yml` pulls.
 env:
-  IMAGE: ghcr.io/axle-h/gb
+  IMAGE: ghcr.io/axle-h/poke-agent
 
 jobs:
   build:

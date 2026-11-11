@@ -52,8 +52,6 @@ WORKDIR /src
 # Only what the compile reads, so a doc edit does not invalidate this layer. The two SDL crates are
 # never built, but their real manifests keep `Cargo.lock` exact and stub `main.rs`es give them targets.
 COPY Cargo.toml Cargo.lock ./
-COPY gbc/Cargo.toml gbc/README.md ./gbc/
-COPY gbc/src/ ./gbc/src/
 COPY poke-core/Cargo.toml poke-core/build.rs ./poke-core/
 COPY poke-core/build/ ./poke-core/build/
 COPY poke-core/src/ ./poke-core/src/
@@ -81,7 +79,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry,sharing=locked \
 FROM debian:bookworm-slim
 
 # `image.source` links the GHCR package to the repo. No `image.licenses`: the repo has no LICENSE.
-LABEL org.opencontainers.image.source="https://github.com/axle-h/gbc" \
+LABEL org.opencontainers.image.source="https://github.com/axle-h/poke-agent" \
       org.opencontainers.image.description="A Game Boy emulator playing Pokémon Red, driven by an LLM over text"
 
 # curl is for the HEALTHCHECK; the binary carries its own TLS roots. `k8s/` relies on uid 10001.

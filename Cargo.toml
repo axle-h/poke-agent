@@ -1,5 +1,5 @@
 [workspace]
-members = ["gbc", "poke-core", "pokered", "pokered-sdl", "poke-agent", "poke-agent-sdl", "poke-agent-web"]
+members = ["poke-core", "pokered", "pokered-sdl", "poke-agent", "poke-agent-sdl", "poke-agent-web"]
 resolver = "3"
 
 # The integration tests are bound by raw emulation speed; these two make every test faster at once.

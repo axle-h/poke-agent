@@ -7,6 +7,8 @@ can break in silence.
 
 ## The agent loop
 
+- `AGENT_RESOLUTION` (20 ms) is empirical: longer and the player overshoots on the overworld,
+  shorter and the game does not settle between agent steps.
 - `poll_policy` is the single seam every decision goes through and it resets the clock the watchdog
   reads; calling `service_tools` from a new site makes the watchdog believe the run is wedged.
 - A new map is recorded in the world graph before that poll, which is where a policy takes the

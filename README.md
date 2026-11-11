@@ -1,11 +1,11 @@
-# gb
+# poke-agent
 
-A Game Boy emulator written in Rust, repurposed as a platform for an LLM to play Pokémon Red —
-entirely through text, with no screenshots required.
+A platform for an LLM to play Pokémon Red on a Game Boy emulator written in Rust — entirely
+through text, with no screenshots required.
 
-The emulator half is a real one: DMG and Game Boy Color, full CPU, PPU, APU, timer, DMA, interrupt
-and joypad emulation, accurate enough to pass the standard hardware-compatibility test ROMs. The
-other half reads the game's own memory — party, bag, map, battle state, on-screen text — using
+The emulator half is [`gbc`](https://github.com/axle-h/gbc), a real one in its own repository and
+on crates.io: DMG, Game Boy Color and Super Game Boy, accurate enough to pass the standard
+hardware-compatibility test ROMs. The other half reads the game's own memory — party, bag, map, battle state, on-screen text — using
 symbols lifted from the [pokered](https://github.com/pret/pokered) disassembly, and drives the game
 by synthesising joypad input. What the model sees is a description of where it is and what it can
 do; what it sends back is an action, not a button press.
@@ -14,26 +14,12 @@ It runs headless, serves its own web UI, and keeps a run going across restarts.
 
 ```
 docker run -d -p 8080:8080 -v gb-runs:/runs \
-  -e OPENAI_API_KEY=sk-… -e GB_MODEL=gpt-5 ghcr.io/axle-h/gb:latest
+  -e OPENAI_API_KEY=sk-… -e GB_MODEL=gpt-5 ghcr.io/axle-h/poke-agent:latest
 ```
 
 Then open <http://localhost:8080> and watch it play.
 
 ## What works
-
-**The emulator.** Blargg's `cpu_instrs`, `dmg_sound` and `instr_timing`; `dmg-acid2` and `cgb-acid2`;
-27 of mooneye's 28 MBC test ROMs, the exception being MBC1 multicart. Six memory bank controllers
-with the MBC3 real-time clock, and a mapper `gbc` cannot emulate fails with a typed error rather than
-quietly running as something else. M-cycle memory timing and the DMG OAM corruption bug are not
-modelled.
-
-**Game Boy Color**, as a first-class model rather than a coat of paint: VRAM/WRAM banking, palette
-RAM, BG map attributes, OAM-index sprite priority, KEY1 double speed, HDMA/GDMA. A DMG cartridge on a
-CGB gets compatibility mode including the boot ROM's title-derived palette, which is why Pokémon Red
-comes out red-tinted here exactly as it does on real hardware.
-
-**Super Game Boy** palettes, without the border: the packets, the check Pokémon makes for one, the
-palette and attribute commands and the VRAM transfers. The desktop window plays the cartridge on one.
 
 **The game.** The agent layer plays Pokémon Red from a fresh save to the credits, because the
 emulator runs at roughly 50× real time with the agent on top: the scripted route reaches eight badges
@@ -50,7 +36,7 @@ need a Rust toolchain, [rgbds](https://rgbds.gbdev.io) ≥ 1.0.0 to assemble the
 pnpm for the browser UI, and SDL2 if you want the desktop window.
 
 ```shell
-git clone --recursive https://github.com/axle-h/gbc.git && cd gbc
+git clone --recursive https://github.com/axle-h/poke-agent.git && cd poke-agent
 
 # 1. The cartridge. `pokered.gbc` is embedded into the binary at compile time and `pokered.sym` is
 #    parsed by build.rs, and neither is in git. `pokered` and `pokered-sdl` need neither.
@@ -266,7 +252,7 @@ and SET style with battle animations on, a headless test the same with them off.
 ## Deployment
 
 The `Dockerfile` builds everything from a bare checkout in four stages — rgbds and the cartridge, the
-SPA, the crate, then a small image of which the binary is under 7 MB. `ghcr.io/axle-h/gb` is
+SPA, the crate, then a small image of which the binary is under 7 MB. `ghcr.io/axle-h/poke-agent` is
 published by CI on every push to main, after a smoke test that proves the image serves and emulates.
 
 ```shell
@@ -284,7 +270,6 @@ an `env!()` would put it in the cargo layer's inputs. `k8s/` has manifests for k
 ## The crates
 
 ```
-gbc/              the emulator, as a library: CPU, PPU, APU, MBCs, save states, the test ROMs
 poke-core/        Pokémon Red as data: species, moves, items, maps, pictures and text, from its source
 pokered/          Pokémon Red recreated natively, on `poke-core` alone; in progress
 poke-agent/       the Pokémon layer — agent, policies, LLM turn loop, the run directory
@@ -294,14 +279,12 @@ pokered-sdl/      the native game in a window, from the keyboard
 vendor/           pokered, the disassembly, as a submodule
 ```
 
-`gbc`, `poke-core` and `pokered` ← `poke-agent` ← the two binaries, `poke-core` ← `pokered` ←
+`gbc` (from crates.io), `poke-core` and `pokered` ← `poke-agent` ← the two binaries, `poke-core` ← `pokered` ←
 `pokered-sdl`, and nothing else: neither `poke-core` nor `pokered` knows about `gbc`. `poke-agent` holds
 the lockstep tests and harvesters that run the two side by side. Each crate has one feature, `slow-tests`.
 
 | Concern | Choice | Reason |
 |---|---|---|
-| Audio resampling | `gbc/src/audio/resampler/`, no dependency | Band-limited *step* synthesis rather than sinc resampling: the APU reports amplitude transitions and each goes straight into a buffer already at the output rate as a 16-tap windowed-sinc step. 7 output samples of latency, no FFT, no crates |
-| Save state format | labelled sections | `"GBST" \| version \| lz4 { [label][len][payload] }`. Unknown sections are skipped and missing ones are not errors, so adding one is free — CGB support doubled VRAM and quadrupled WRAM at the cost of zero fixture regeneration |
 | Symbol codegen | `poke-agent/build.rs` + `pokered.sym` | Every RAM/ROM symbol becomes a typed pointer constant, so an address that moves upstream is a compile error |
 | Audio transport | raw Opus over chunked binary framing | No container and no muxer: WebCodecs takes bare packets, and an `OpusHead` would put the decoder into Ogg mode. Not deflated either, at +16.6% measured |
 | Video transport | chunked binary + `flate2` | Not a WebSocket: nothing is bidirectional, and a plain response needs no upgrade, no ping/pong and no second reconnection story. The compression is the protocol rather than a `Content-Encoding`, so no proxy can buffer and re-encode it |
@@ -324,11 +307,9 @@ recipe.
 
 ## A note on licences
 
-There is no top-level `LICENSE` here yet. `gbc` is MIT OR Apache-2.0, with both texts in `gbc/`.
-Its test ROMs under `gbc/src/roms/` are left out of the published crate; all but `workload/` are
-third-party.
+There is no top-level `LICENSE` here yet.
 
-Two dependencies are worth naming, and neither constrains anything: `opus-rs` is BSD-3-Clause, a
+Three dependencies are worth naming, and none constrains anything: `gbc` is MIT OR Apache-2.0, `opus-rs` is BSD-3-Clause, a
 Rust port of libopus, which is BSD-3 itself, and `rhai` is MIT OR Apache-2.0. Both are named because this paragraph is the list, and a
 dependency absent from it is one nobody checked. Nor does the desktop window's
 `AdwaitaMono-Symbols.ttf`, five glyphs Roboto lacks cut from Adwaita Mono, which is SIL OFL 1.1 with

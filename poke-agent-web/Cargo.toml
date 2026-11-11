@@ -9,7 +9,7 @@ description = "Serves a poke-agent run: the game, the streams and the web UI."
 slow-tests = []
 
 [dependencies]
-gbc = { path = "../gbc" }
+gbc = "0.1.1"
 poke-agent = { path = "../poke-agent" }
 # The recreation, for a run served with `GB_GAME=native`.
 pokered = { path = "../pokered" }

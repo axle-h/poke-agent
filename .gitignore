@@ -3,6 +3,8 @@
 **/target/
 .idea/
 .claude/
+# A local `[patch]` pointing `gbc` at a checkout of its own repository.
+/.cargo/config.toml
 
 # `web/dist` must exist for the crate to compile, hence the committed `.gitkeep`.
 /poke-agent-web/web/node_modules/

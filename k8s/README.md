@@ -42,7 +42,7 @@ ConfigMap first, or the pod that rolls reads the old one.
 
 ## The image
 
-`ghcr.io/axle-h/gb:latest`, published on every push to main after a smoke test that proves the
+`ghcr.io/axle-h/poke-agent:latest`, published on every push to main after a smoke test that proves the
 image serves the SPA, decodes the cartridge and emulates. Every build is also tagged with its commit,
 which is the tag to pin or roll back to. `imagePullPolicy: Always` means a `rollout restart` picks up
 the newest build; nothing watches the registry, because a rollout interrupts a live playthrough.

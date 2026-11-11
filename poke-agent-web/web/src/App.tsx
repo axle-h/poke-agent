@@ -126,8 +126,8 @@ export function App() {
                 {'{}'} Raw events {raw ? '✓' : ''}
               </button>
               <hr />
-              <a className="menu-item" role="menuitem" href="https://github.com/axle-h/gbc">
-                <GitHubMark /> axle-h/gbc on GitHub
+              <a className="menu-item" role="menuitem" href="https://github.com/axle-h/poke-agent">
+                <GitHubMark /> axle-h/poke-agent on GitHub
               </a>
               <a className="menu-item" role="menuitem" href="https://ax-h.com">
                 <img className="face" src="/mugshot.png" alt="" width={20} height={20} /> ax-h.com

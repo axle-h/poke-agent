@@ -32,7 +32,7 @@ fn every_committed_fixture_decodes() {
     assert!(
         failures.is_empty(),
         "{} fixture(s) failed to decode. If you changed a serialised struct, see the rules at the \
-         top of gbc/src/savestate/mod.rs; appending within a section should never do this.\n{}",
+         top of gbc's savestate module; appending within a section should never do this.\n{}",
         failures.len(),
         failures.join("\n")
     );
